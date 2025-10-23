@@ -34,21 +34,21 @@ Try the frontend UI here: [https://foolystaycooly.github.io/promptoria/](https:/
 git clone https://github.com/yourusername/promptoria.git
 cd promptoria
 
-Install dependencies:
+### 2. Install dependencies:
 
 npm install
 
-Create a .env file in the root (for OpenAI keys or other secrets):
+### 3. Create a .env file in the root (for OpenAI keys or other secrets):
 
 OPENAI_API_KEY=your_key_here
 
-Run the backend server:
+### 4. Run the backend server:
 
 node server.js
 
-Open the frontend:
+### 5. Open the frontend:
 
-Go to docs/index.html in your browser, or use a local server:
+### 6. Go to docs/index.html in your browser, or use a local server:
 
 npx serve docs
 
@@ -72,11 +72,12 @@ Analytics for prompt performance.
 
 Mobile app and Chrome extension.
 
-License
+### License
 
 ⚠️ Do not copy or use this code for commercial purposes without permission.
 
 MIT License (personal portfolio use allowed).
+
 
 Contact / Feedback
 
