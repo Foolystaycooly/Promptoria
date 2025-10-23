@@ -1,4 +1,4 @@
-# Promptoria – The magically AI Prompt Builder
+# Promptoria – The magical AI Prompt Builder
 
 **Promptoria** helps you craft optimized prompts for ChatGPT, Claude, Gemini, Midjourney, and more.  
 It’s built to make prompt creation intuitive, fun, and *magically productive*.
