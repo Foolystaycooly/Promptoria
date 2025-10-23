@@ -1,5 +1,10 @@
 # Promptoria – The magically AI Prompt Builder
 
+
+## **Live Demo**
+Try the frontend UI here: [https://foolystaycooly.github.io/promptoria/](https://foolystaycooly.github.io/promptoria/)  
+
+
 **Promptoria** helps you craft optimized prompts for ChatGPT, Claude, Gemini, Midjourney, and more.  
 It’s built to make prompt creation intuitive, fun, and *magically productive*.
 
