@@ -5,8 +5,7 @@ It’s built to make prompt creation intuitive, fun, and *magically productive*.
 
 
 ## **Live Demo**
-Try the frontend UI here: [https://foolystaycooly.github.io/promptoria/](https://foolystaycooly.github.io/promptoria/)  
-
+Try the frontend UI here: [https://foolystaycooly.github.io/Promptoria/]
 
 ---
 
