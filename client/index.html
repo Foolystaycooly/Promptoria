@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Promptoria — AI Prompt Builder</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar-overlay" id="sidebar">
+    <div id="sidebarLogo"></div>
+    <nav>
+      <button class="sidebar-btn active" data-section="generator">⚡ Generator</button>
+      <button class="sidebar-btn" data-section="library">📚 Library</button>
+      <button class="sidebar-btn" data-section="search">🔍 Search</button>
+    </nav>
+    <p class="sidebar-footer">© 2025 Promptoria</p>
+  </aside>
+
+  <!-- Toggle Button -->
+  <button id="sidebarToggle" class="sidebar-toggle">☰</button>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <section id="generator" class="section active">
+      <h1>AI Prompt Builder</h1>
+      <p>Transform ideas into optimized prompts.</p>
+
+      <label for="goal">Your Goal</label>
+      <textarea id="goal" placeholder="Write a short film concept about time travel..."></textarea>
+
+      <div class="selectors">
+        <select id="platform">
+          <option>ChatGPT</option>
+          <option>Claude</option>
+          <option>Gemini</option>
+          <option>Midjourney</option>
+        </select>
+        <select id="tone">
+          <option>Neutral</option>
+          <option>Playful</option>
+          <option>Professional</option>
+          <option>Inspirational</option>
+        </select>
+        <select id="style">
+          <option>Concise</option>
+          <option>Detailed</option>
+          <option>Creative</option>
+          <option>Analytical</option>
+        </select>
+      </div>
+
+      <button id="generate">✨ Generate Prompt</button>
+      <div id="output" class="output-box">Your prompt will appear here...</div>
+    </section>
+
+    <section id="library" class="section">
+      <h1>📚 Prompt Library</h1>
+      <div id="promptList">No prompts saved yet.</div>
+    </section>
+
+    <section id="search" class="section">
+      <h1>🔍 Search Prompts</h1>
+      <input type="text" id="searchBox" placeholder="Search your prompts..." />
+      <div id="searchResults"></div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
