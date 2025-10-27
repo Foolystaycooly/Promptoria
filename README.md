@@ -30,7 +30,7 @@ Try the frontend UI here: [https://foolystaycooly.github.io/Promptoria/]
 
 ### 1. Clone the repository:
 
-git clone https://github.com/yourusername/promptoria.git
+git clone https://github.com/foolystaycooly/promptoria.git
 cd promptoria
 
 ### 2. Install dependencies:
