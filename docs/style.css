@@ -236,3 +236,35 @@ button#generate:hover {
     padding: 50px 15px;
   }
 }
+
+/* --- Overlay for mobile --- */
+@media (max-width: 900px) {
+  .sidebar-overlay {
+    transition: transform 0.3s ease;
+    left: 0; /* keep at 0 for transform sliding */
+    transform: translateX(-100%);
+  }
+  
+  .sidebar-overlay.active {
+    transform: translateX(0);
+  }
+
+  /* Semi-transparent background overlay behind sidebar */
+  .sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 999;
+    display: none;
+  }
+  
+  .sidebar-backdrop.active {
+    display: block;
+  }
+
+  /* Main content does not shift on mobile */
+  .sidebar-overlay ~ .main-content {
+    margin-left: 0 !important;
+  }
+}
+
