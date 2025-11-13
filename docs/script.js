@@ -19,252 +19,40 @@ const promptList     = $("#promptList");
 const sidebar        = $(".sidebar-overlay");
 const toggleBtn      = $(".sidebar-toggle");
 const navButtons     = $$("button[data-section]");
-const sections       = {};
-
-// --- Build sections object ---
-navButtons.forEach(btn => {
-  const id = btn.dataset.section;
-  if (id) {
-    const sec = document.getElementById(id);
-    if (sec) sections[id] = sec;
-  }
-});
 
 // --- Backend URL ---
 const BACKEND_URL = "https://promptoria-ly2b.onrender.com";
 
 // ----------------------------
-// Sidebar toggle & mobile support
+// Sidebar Toggle
 // ----------------------------
-if (sidebar && toggleBtn) {
-  const BACKDROP_ZINDEX = 999;
-
-  // Create backdrop for mobile
-  let backdrop = document.createElement("div");
-  backdrop.className = "sidebar-backdrop";
-  document.body.appendChild(backdrop);
-
-  const setSidebarPosition = (active) => {
-    if (window.innerWidth < 900) {
-      // Mobile overlay mode
-      sidebar.classList.toggle("active", active);
-      backdrop.classList.toggle("active", active);
-      toggleBtn.style.left = active ? (sidebar.getBoundingClientRect().width + 20) + "px" : "20px";
-    } else {
-      // Desktop: shift main content
-      sidebar.classList.toggle("active", active);
-      document.querySelector(".main-content").style.marginLeft = active ? "240px" : "0";
-      toggleBtn.style.left = active ? "260px" : "20px";
-    }
-  };
-
-  // Toggle button click
+if (toggleBtn && sidebar) {
   toggleBtn.addEventListener("click", () => {
-    const active = !sidebar.classList.contains("active");
-    setSidebarPosition(active);
+    sidebar.classList.toggle("active");
+    if (sidebar.classList.contains("active")) {
+      const sidebarWidth = sidebar.getBoundingClientRect().width || 240;
+      toggleBtn.style.left = (sidebarWidth + 20) + "px";
+    } else {
+      toggleBtn.style.left = "20px";
+    }
   });
 
-  // Close sidebar by clicking backdrop (mobile only)
-  backdrop.addEventListener("click", () => setSidebarPosition(false));
-
-  // Optional: swipe gestures (mobile only)
-  let startX = 0;
-  let isDragging = false;
-
-  document.addEventListener("touchstart", e => {
-    if (window.innerWidth >= 900) return;
-    startX = e.touches[0].clientX;
-    isDragging = startX < 30; // start from left edge
-  });
-
-  document.addEventListener("touchmove", e => {
-    if (!isDragging) return;
-    const delta = e.touches[0].clientX - startX;
-    if (delta > 50) setSidebarPosition(true);
-    if (delta < -50) setSidebarPosition(false);
-  });
-
-  document.addEventListener("touchend", () => { isDragging = false; });
-}
-
-
-// --- Navigation ---
-const setActiveSection = (id) => {
-  navButtons.forEach(b => b.dataset.section === id ? b.classList.add("active") : b.classList.remove("active"));
-  Object.keys(sections).forEach(k => sections[k].classList.toggle("active", k === id));
-};
-
-const firstBtn = navButtons.find(b => b.classList.contains("active")) || navButtons[0];
-if (firstBtn && firstBtn.dataset.section) setActiveSection(firstBtn.dataset.section);
-
-navButtons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    const id = btn.dataset.section;
-    if (!id) return;
-    setActiveSection(id);
-    if (sidebar && window.innerWidth < 900) {
+  // click outside sidebar to close on small screens
+  document.addEventListener("click", (e) => {
+    if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target) && sidebar.classList.contains("active")) {
       sidebar.classList.remove("active");
       toggleBtn.style.left = "20px";
     }
   });
-});
-
-// --- Generate optimized prompt ---
-if (button) {
-  button.addEventListener("click", async () => {
-    if (!goalInput) return;
-    const goal = goalInput.value.trim();
-    if (!goal) { output.textContent = "⚠️ Please enter your goal first."; return; }
-
-    const payload = {
-      goal,
-      platform: platformSelect?.value || "",
-      tone: toneSelect?.value || "",
-      style: styleSelect?.value || "",
-      context: contextSelect?.value || ""
-    };
-
-    output.textContent = "✨ Optimizing your prompt...";
-
-    try {
-      const res = await fetch(`${BACKEND_URL}/api/optimize`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      output.textContent = data.optimizedPrompt || "⚠️ Error optimizing prompt.";
-      if (saveBtn) saveBtn.style.display = "inline-block";
-    } catch (err) {
-      console.error(err);
-      output.textContent = "❌ Server error. Make sure the backend is running.";
-    }
-  });
 }
 
-// --- Prompt library ---
-function renderLibrary() {
-  if (!promptList) return;
-  const library = JSON.parse(localStorage.getItem("promptLibrary")) || [];
-  promptList.innerHTML = library.length ? "" : "<p style='opacity:.7'>No prompts saved yet.</p>";
-
-  library.forEach((item, idx) => {
-    const card = document.createElement("div");
-    card.className = "prompt-card";
-    card.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <strong style="font-size:0.95rem">${item.platform || "—"}</strong>
-        <small style="opacity:.7">${new Date(item.timestamp).toLocaleString()}</small>
-      </div>
-      <pre style="margin:10px 0 12px; white-space:pre-wrap;">${escapeHtml(item.prompt)}</pre>
-      <div style="display:flex;gap:8px;">
-        <button class="use-btn" data-idx="${idx}">Use</button>
-        <button class="del-btn" data-idx="${idx}">Delete</button>
-      </div>
-    `;
-    promptList.appendChild(card);
-  });
-
-  $$(".use-btn").forEach(b => b.addEventListener("click", e => reusePrompt(Number(e.currentTarget.dataset.idx))));
-  $$(".del-btn").forEach(b => b.addEventListener("click", e => deletePrompt(Number(e.currentTarget.dataset.idx))));
-}
-
-function savePrompt() {
-  const library = JSON.parse(localStorage.getItem("promptLibrary")) || [];
-  library.push({
-    prompt: output.textContent || "",
-    platform: platformSelect?.value || "",
-    tone: toneSelect?.value || "",
-    style: styleSelect?.value || "",
-    timestamp: new Date().toISOString()
-  });
-  localStorage.setItem("promptLibrary", JSON.stringify(library));
-  renderLibrary();
-}
-
-function reusePrompt(idx) {
-  const library = JSON.parse(localStorage.getItem("promptLibrary")) || [];
-  if (!library[idx]) return;
-  goalInput.value = library[idx].prompt;
-}
-
-function deletePrompt(idx) {
-  const library = JSON.parse(localStorage.getItem("promptLibrary")) || [];
-  library.splice(idx, 1);
-  localStorage.setItem("promptLibrary", JSON.stringify(library));
-  renderLibrary();
-}
-
-if (saveBtn) saveBtn.addEventListener("click", savePrompt);
-
-// --- Search Filter ---
-const searchBox = $("#searchBox") || $("#searchPrompts");
-if (searchBox && promptList) {
-  searchBox.addEventListener("input", e => {
-    const q = e.target.value.toLowerCase().trim();
-    const library = JSON.parse(localStorage.getItem("promptLibrary")) || [];
-    const results = library.filter(item => (item.prompt || "").toLowerCase().includes(q));
-    promptList.innerHTML = results.length ? "" : "<p style='opacity:.7'>No matches.</p>";
-    results.forEach(item => {
-      const d = document.createElement("div");
-      d.className = "prompt-card";
-      d.innerHTML = `<pre style="white-space:pre-wrap;">${escapeHtml(item.prompt)}</pre>`;
-      promptList.appendChild(d);
-    });
-  });
-}
-
-// --- Mobile swipe / overlay ---
-let startX = 0;
-let isDragging = false;
-
-// Create backdrop
-let backdrop = document.createElement("div");
-backdrop.className = "sidebar-backdrop";
-document.body.appendChild(backdrop);
-
-// Swipe gestures for mobile
-document.addEventListener("touchstart", e => {
-  if (window.innerWidth >= 900) return; // only mobile
-  startX = e.touches[0].clientX;
-  isDragging = startX < 30; // start drag from very left edge
-});
-
-document.addEventListener("touchmove", e => {
-  if (!isDragging) return;
-  const touchX = e.touches[0].clientX;
-  const delta = touchX - startX;
-
-  if (delta > 50) { // swipe right to open
-    sidebar.classList.add("active");
-    backdrop.classList.add("active");
-    toggleBtn.style.left = "calc(200px + 20px)";
-  }
-  if (delta < -50) { // swipe left to close
-    sidebar.classList.remove("active");
-    backdrop.classList.remove("active");
-    toggleBtn.style.left = "20px";
-  }
-});
-
-document.addEventListener("touchend", () => {
-  isDragging = false;
-});
-
-// Backdrop click closes sidebar
-backdrop.addEventListener("click", () => {
-  sidebar.classList.remove("active");
-  backdrop.classList.remove("active");
-  toggleBtn.style.left = "20px";
-});
-
-
-// Sidebar Logo Animation
+// ----------------------------
+// Sidebar Logo
+// ----------------------------
 const sidebarLogo = document.getElementById("sidebarLogo");
 if (sidebarLogo) {
-  const logoText = "Promptoria"; // your name/logo text
-  sidebarLogo.innerHTML = "";     // clear any existing content
-
+  const logoText = "Promptoria";
+  sidebarLogo.innerHTML = "";
   [...logoText].forEach((ch, i) => {
     const span = document.createElement("span");
     span.textContent = ch;
@@ -276,11 +64,179 @@ if (sidebarLogo) {
   });
 }
 
+// ----------------------------
+// Sidebar Navigation
+// ----------------------------
+const sections = {};
+navButtons.forEach(btn => {
+  const id = btn.dataset.section;
+  if (id) {
+    const sec = document.getElementById(id);
+    if (sec) sections[id] = sec;
+  }
+});
 
-// --- Utilities ---
-function escapeHtml(str) {
-  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+function setActiveSection(id) {
+  navButtons.forEach(b => {
+    if (b.dataset.section === id) b.classList.add("active");
+    else b.classList.remove("active");
+  });
+  Object.keys(sections).forEach(k => sections[k].classList.toggle("active", k === id));
 }
 
-// --- Init ---
+// Initialize first section
+const firstBtn = navButtons.find(b => b.classList.contains("active")) || navButtons[0];
+if (firstBtn && firstBtn.dataset.section) setActiveSection(firstBtn.dataset.section);
+
+navButtons.forEach(btn => btn.addEventListener("click", () => {
+  const id = btn.dataset.section;
+  if (!id) return;
+  setActiveSection(id);
+  if (sidebar && window.innerWidth < 900) {
+    sidebar.classList.remove("active");
+    toggleBtn.style.left = "20px";
+  }
+}));
+
+// ----------------------------
+// Generate optimized prompt
+// ----------------------------
+if (button) {
+  button.addEventListener("click", async () => {
+    if (!goalInput) return;
+    const goal = goalInput.value.trim();
+    if (!goal) {
+      if (output) output.textContent = "⚠️ Please enter your goal first.";
+      return;
+    }
+
+    const payload = {
+      goal,
+      platform: platformSelect?.value || "",
+      tone: toneSelect?.value || "",
+      style: styleSelect?.value || "",
+      context: contextSelect?.value || ""
+    };
+
+    if (output) output.textContent = "✨ Optimizing your prompt...";
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/optimize`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      if (output) output.textContent = data.optimizedPrompt || "⚠️ Error optimizing prompt.";
+      if (saveBtn) saveBtn.style.display = "inline-block";
+    } catch (err) {
+      console.error(err);
+      if (output) output.textContent = "❌ Server error. Make sure the backend is running.";
+    }
+  });
+}
+
+// ----------------------------
+// Save / Load Prompt Library
+// ----------------------------
+function renderLibrary() {
+  if (!promptList) return;
+  const library = JSON.parse(localStorage.getItem("promptLibrary")) || [];
+  promptList.innerHTML = "";
+
+  if (!library.length) {
+    promptList.innerHTML = "<p style='opacity:.7'>No prompts saved yet.</p>";
+    return;
+  }
+
+  library.forEach((item, idx) => {
+    const card = document.createElement("div");
+    card.className = "prompt-card";
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <strong style="font-size:0.95rem">${item.platform || "—"}</strong>
+        <small style="opacity:.7">${new Date(item.timestamp).toLocaleString()}</small>
+      </div>
+      <pre style="margin:10px 0 12px; white-space:pre-wrap;">${escapeHtml(item.prompt || "")}</pre>
+      <div style="display:flex;gap:8px;">
+        <button class="use-btn" data-idx="${idx}">Use</button>
+        <button class="del-btn" data-idx="${idx}">Delete</button>
+      </div>
+    `;
+    promptList.appendChild(card);
+  });
+
+  $$(".use-btn").forEach(b => b.addEventListener("click", (e) => {
+    const i = Number(e.currentTarget.dataset.idx);
+    reusePrompt(i);
+  }));
+
+  $$(".del-btn").forEach(b => b.addEventListener("click", (e) => {
+    const i = Number(e.currentTarget.dataset.idx);
+    deletePrompt(i);
+  }));
+}
+
+function savePrompt() {
+  if (!output) return;
+  const library = JSON.parse(localStorage.getItem("promptLibrary")) || [];
+  const newPrompt = {
+    prompt: output.textContent || "",
+    platform: platformSelect?.value || "",
+    tone: toneSelect?.value || "",
+    style: styleSelect?.value || "",
+    timestamp: new Date().toISOString()
+  };
+  library.push(newPrompt);
+  localStorage.setItem("promptLibrary", JSON.stringify(library));
+  renderLibrary();
+}
+
+function reusePrompt(index) {
+  const library = JSON.parse(localStorage.getItem("promptLibrary")) || [];
+  if (!library[index]) return;
+  goalInput.value = library[index].prompt;
+}
+
+function deletePrompt(index) {
+  const library = JSON.parse(localStorage.getItem("promptLibrary")) || [];
+  library.splice(index, 1);
+  localStorage.setItem("promptLibrary", JSON.stringify(library));
+  renderLibrary();
+}
+
+if (saveBtn) saveBtn.addEventListener("click", savePrompt);
+
+// ----------------------------
+// Search Filter
+// ----------------------------
+const searchBox = $("#searchBox") || $("#searchPrompts");
+if (searchBox && promptList) {
+  searchBox.addEventListener("input", (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    const library = JSON.parse(localStorage.getItem("promptLibrary")) || [];
+    const results = library.filter(item => (item.prompt || "").toLowerCase().includes(q));
+    promptList.innerHTML = "";
+    if (!results.length) promptList.innerHTML = "<p style='opacity:.7'>No matches.</p>";
+    results.forEach((item) => {
+      const d = document.createElement("div");
+      d.className = "prompt-card";
+      d.innerHTML = `<pre style="white-space:pre-wrap;">${escapeHtml(item.prompt)}</pre>`;
+      promptList.appendChild(d);
+    });
+  });
+}
+
+// ----------------------------
+// Utilities
+// ----------------------------
+function escapeHtml(unsafe) {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+// Initialize library on load
 window.addEventListener("load", renderLibrary);
