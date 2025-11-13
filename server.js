@@ -1,13 +1,18 @@
+// server.js
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import OpenAI from "openai";
 
 dotenv.config();
+
 const app = express();
-app.use(cors({
-  origin: "https://foolystaycooly.github.io" // <-- your frontend URL
-}));
+const PORT = process.env.PORT || 3000;
+
+// Only allow requests from your GitHub Pages frontend
+const FRONTEND_URL = process.env.FRONTEND_URL || "https://foolystaycooly.github.io";
+
+app.use(cors({ origin: FRONTEND_URL }));
 app.use(express.json());
 
 const openai = new OpenAI({
@@ -27,7 +32,7 @@ app.post("/api/optimize", async (req, res) => {
     `;
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini", // or gpt-4-turbo if you have it
+      model: "gpt-4o-mini",
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: goal },
@@ -42,6 +47,4 @@ app.post("/api/optimize", async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
-
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
