@@ -16,25 +16,73 @@ const output         = $("#output");
 const button         = $("#generate");
 const saveBtn        = $("#savePromptBtn");
 const promptList     = $("#promptList");
-const sidebar       = $(".sidebar-overlay") || $("#sidebar") || null;
-const toggleBtn     = $("#sidebarToggle") || $(".sidebar-toggle");
-const sidebarLogo   = $("#sidebarLogo");
+const sidebar        = $(".sidebar-overlay");
+const toggleBtn      = $(".sidebar-toggle");
+const navButtons     = $$("button[data-section]");
+const sections       = {};
+
+// --- Build sections object ---
+navButtons.forEach(btn => {
+  const id = btn.dataset.section;
+  if (id) {
+    const sec = document.getElementById(id);
+    if (sec) sections[id] = sec;
+  }
+});
 
 // --- Backend URL ---
 const BACKEND_URL = "https://promptoria-ly2b.onrender.com";
 
-// ----------------------------
-// Generate optimized prompt
-// ----------------------------
+// --- Sidebar toggle ---
+if (toggleBtn && sidebar) {
+  toggleBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("active");
+
+    // move toggle button
+    const width = sidebar.getBoundingClientRect().width || 240;
+    toggleBtn.style.left = sidebar.classList.contains("active") ? `${width + 20}px` : "20px";
+    toggleBtn.setAttribute("aria-expanded", sidebar.classList.contains("active"));
+
+    // For mobile, do not push main content
+    if (window.innerWidth < 900) return;
+  });
+
+  // close sidebar on outside click
+  document.addEventListener("click", e => {
+    if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target) && sidebar.classList.contains("active")) {
+      sidebar.classList.remove("active");
+      toggleBtn.style.left = "20px";
+    }
+  });
+}
+
+// --- Navigation ---
+const setActiveSection = (id) => {
+  navButtons.forEach(b => b.dataset.section === id ? b.classList.add("active") : b.classList.remove("active"));
+  Object.keys(sections).forEach(k => sections[k].classList.toggle("active", k === id));
+};
+
+const firstBtn = navButtons.find(b => b.classList.contains("active")) || navButtons[0];
+if (firstBtn && firstBtn.dataset.section) setActiveSection(firstBtn.dataset.section);
+
+navButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    const id = btn.dataset.section;
+    if (!id) return;
+    setActiveSection(id);
+    if (sidebar && window.innerWidth < 900) {
+      sidebar.classList.remove("active");
+      toggleBtn.style.left = "20px";
+    }
+  });
+});
+
+// --- Generate optimized prompt ---
 if (button) {
   button.addEventListener("click", async () => {
     if (!goalInput) return;
-
     const goal = goalInput.value.trim();
-    if (!goal) {
-      if (output) output.textContent = "⚠️ Please enter your goal first.";
-      return;
-    }
+    if (!goal) { output.textContent = "⚠️ Please enter your goal first."; return; }
 
     const payload = {
       goal,
@@ -44,7 +92,7 @@ if (button) {
       context: contextSelect?.value || ""
     };
 
-    if (output) output.textContent = "✨ Optimizing your prompt...";
+    output.textContent = "✨ Optimizing your prompt...";
 
     try {
       const res = await fetch(`${BACKEND_URL}/api/optimize`, {
@@ -52,29 +100,21 @@ if (button) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
-
       const data = await res.json();
-      if (output) output.textContent = data.optimizedPrompt || "⚠️ Error optimizing prompt.";
+      output.textContent = data.optimizedPrompt || "⚠️ Error optimizing prompt.";
       if (saveBtn) saveBtn.style.display = "inline-block";
     } catch (err) {
       console.error(err);
-      if (output) output.textContent = "❌ Server error. Make sure the backend is running.";
+      output.textContent = "❌ Server error. Make sure the backend is running.";
     }
   });
 }
 
-// ----------------------------
-// Save / load prompt library
-// ----------------------------
+// --- Prompt library ---
 function renderLibrary() {
   if (!promptList) return;
   const library = JSON.parse(localStorage.getItem("promptLibrary")) || [];
-  promptList.innerHTML = "";
-
-  if (!library.length) {
-    promptList.innerHTML = "<p style='opacity:.7'>No prompts saved yet.</p>";
-    return;
-  }
+  promptList.innerHTML = library.length ? "" : "<p style='opacity:.7'>No prompts saved yet.</p>";
 
   library.forEach((item, idx) => {
     const card = document.createElement("div");
@@ -84,7 +124,7 @@ function renderLibrary() {
         <strong style="font-size:0.95rem">${item.platform || "—"}</strong>
         <small style="opacity:.7">${new Date(item.timestamp).toLocaleString()}</small>
       </div>
-      <pre style="margin:10px 0 12px; white-space:pre-wrap;">${escapeHtml(item.prompt || "")}</pre>
+      <pre style="margin:10px 0 12px; white-space:pre-wrap;">${escapeHtml(item.prompt)}</pre>
       <div style="display:flex;gap:8px;">
         <button class="use-btn" data-idx="${idx}">Use</button>
         <button class="del-btn" data-idx="${idx}">Delete</button>
@@ -93,59 +133,47 @@ function renderLibrary() {
     promptList.appendChild(card);
   });
 
-  $$(".use-btn").forEach(b => b.addEventListener("click", (e) => {
-    const i = Number(e.currentTarget.dataset.idx);
-    reusePrompt(i);
-  }));
-
-  $$(".del-btn").forEach(b => b.addEventListener("click", (e) => {
-    const i = Number(e.currentTarget.dataset.idx);
-    deletePrompt(i);
-  }));
+  $$(".use-btn").forEach(b => b.addEventListener("click", e => reusePrompt(Number(e.currentTarget.dataset.idx))));
+  $$(".del-btn").forEach(b => b.addEventListener("click", e => deletePrompt(Number(e.currentTarget.dataset.idx))));
 }
 
 function savePrompt() {
-  if (!output) return;
   const library = JSON.parse(localStorage.getItem("promptLibrary")) || [];
-  const newPrompt = {
+  library.push({
     prompt: output.textContent || "",
     platform: platformSelect?.value || "",
     tone: toneSelect?.value || "",
     style: styleSelect?.value || "",
     timestamp: new Date().toISOString()
-  };
-  library.push(newPrompt);
+  });
   localStorage.setItem("promptLibrary", JSON.stringify(library));
   renderLibrary();
 }
 
-function reusePrompt(index) {
+function reusePrompt(idx) {
   const library = JSON.parse(localStorage.getItem("promptLibrary")) || [];
-  if (!library[index]) return;
-  goalInput.value = library[index].prompt;
+  if (!library[idx]) return;
+  goalInput.value = library[idx].prompt;
 }
 
-function deletePrompt(index) {
+function deletePrompt(idx) {
   const library = JSON.parse(localStorage.getItem("promptLibrary")) || [];
-  library.splice(index, 1);
+  library.splice(idx, 1);
   localStorage.setItem("promptLibrary", JSON.stringify(library));
   renderLibrary();
 }
 
 if (saveBtn) saveBtn.addEventListener("click", savePrompt);
 
-// ----------------------------
-// Simple search filter
-// ----------------------------
+// --- Search Filter ---
 const searchBox = $("#searchBox") || $("#searchPrompts");
 if (searchBox && promptList) {
-  searchBox.addEventListener("input", (e) => {
+  searchBox.addEventListener("input", e => {
     const q = e.target.value.toLowerCase().trim();
     const library = JSON.parse(localStorage.getItem("promptLibrary")) || [];
     const results = library.filter(item => (item.prompt || "").toLowerCase().includes(q));
-    promptList.innerHTML = "";
-    if (!results.length) promptList.innerHTML = "<p style='opacity:.7'>No matches.</p>";
-    results.forEach((item) => {
+    promptList.innerHTML = results.length ? "" : "<p style='opacity:.7'>No matches.</p>";
+    results.forEach(item => {
       const d = document.createElement("div");
       d.className = "prompt-card";
       d.innerHTML = `<pre style="white-space:pre-wrap;">${escapeHtml(item.prompt)}</pre>`;
@@ -154,15 +182,10 @@ if (searchBox && promptList) {
   });
 }
 
-// ----------------------------
-// Utilities
-// ----------------------------
-function escapeHtml(unsafe) {
-  return unsafe
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+// --- Utilities ---
+function escapeHtml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-// Initialize library on load
+// --- Init ---
 window.addEventListener("load", renderLibrary);
