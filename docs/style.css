@@ -127,6 +127,60 @@ h1, h2, h3, p {
   display: block;
 }
 
+/* --- J-Pop Radio --- */
+.sidebar-radio {
+  background: rgba(255,182,193,0.05);
+  border: 1px solid rgba(255,182,193,0.2);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.sidebar-radio h3 {
+  color: #ffb6c1;
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.radio-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.radio-btn {
+  background: #ff69b4;
+  border: none;
+  color: white;
+  font-size: 1.1rem;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.1s;
+}
+
+.radio-btn:hover {
+  background: #ff85c1;
+  transform: scale(1.05);
+}
+
+#nowPlaying {
+  color: #fff;
+  margin-top: 6px;
+}
+
+@media (max-width: 600px) {
+  .sidebar-radio {
+    padding: 8px;
+  }
+  .radio-btn {
+    font-size: 1rem;
+    padding: 6px 10px;
+  }
+}
+
+
 /* Input & Output */
 textarea, select, input {
   width: 100%;
