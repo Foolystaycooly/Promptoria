@@ -228,13 +228,13 @@ button#generate:hover {
 
 .sakura {
   position: absolute;
-  width: 14px;
-  height: 14px;
-  background: radial-gradient(circle at 40% 40%, #ffc0cb 40%, #ffb6c1 100%);
-  border-radius: 50% 60% 40% 60%;
-  opacity: 0.9;
+  width: 6px;  /* base size */
+  height: 6px;
+  background: #ffb6c1; /* solid pink for retro pixel style */
+  border-radius: 2px;  /* slightly squared */
+  opacity: 0.8;
   pointer-events: none;
-  z-index: 9999; /* always on top */
+  z-index: 9999;
   animation: fall linear forwards;
 }
 
