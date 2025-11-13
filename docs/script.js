@@ -308,19 +308,20 @@ function createSakura() {
   const petal = document.createElement("div");
   petal.classList.add("sakura");
 
-  // random start position (mainly from the right)
-  petal.style.right = `${Math.random() * 20}px`;
-  petal.style.animationDuration = `${8 + Math.random() * 5}s`;
-  petal.style.opacity = Math.random() * 0.8 + 0.2;
+  // Start near the right corner, randomize a bit
+  petal.style.right = `${Math.random() * 150}px`;
+  petal.style.animationDuration = `${6 + Math.random() * 5}s`;
+  petal.style.animationDelay = `${Math.random() * 2}s`;
   petal.style.transform = `rotate(${Math.random() * 360}deg)`;
+  petal.style.opacity = 0.6 + Math.random() * 0.4;
 
   container.appendChild(petal);
 
-  // remove petal after it falls
-  setTimeout(() => petal.remove(), 14000);
+  // Remove after animation ends
+  setTimeout(() => petal.remove(), 12000);
 }
 
-// spawn petals every 400ms
-setInterval(createSakura, 400);
+// spawn petals every 500ms
+setInterval(createSakura, 500);
 
 
