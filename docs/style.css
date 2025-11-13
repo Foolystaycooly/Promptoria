@@ -220,7 +220,7 @@ button#generate:hover {
   right: 20px;
   width: 120px;   /* adjust size as needed */
   height: 150px;
-  background: url('sakura-tree.png') no-repeat center/contain; /* your PNG */
+  background: url('assets/sakura-tree.png') no-repeat center/contain; /* your PNG */
   z-index: 5001;
   pointer-events: none; /* won't block clicks */
   animation: treeGlitch 2s infinite;
