@@ -259,6 +259,24 @@ backdrop.addEventListener("click", () => {
 });
 
 
+// Sidebar Logo Animation
+const sidebarLogo = document.getElementById("sidebarLogo");
+if (sidebarLogo) {
+  const logoText = "Promptoria"; // your name/logo text
+  sidebarLogo.innerHTML = "";     // clear any existing content
+
+  [...logoText].forEach((ch, i) => {
+    const span = document.createElement("span");
+    span.textContent = ch;
+    span.style.display = "inline-block";
+    span.style.animation = "floatWave 1.6s ease-in-out infinite";
+    span.style.animationDelay = `${i * 0.08}s`;
+    span.style.marginRight = "1px";
+    sidebarLogo.appendChild(span);
+  });
+}
+
+
 // --- Utilities ---
 function escapeHtml(str) {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
