@@ -300,7 +300,6 @@ if (prevStation) prevStation.addEventListener("click", () => changeStation(-1));
 // --- Initialize ---
 loadStation(currentStation);
 
-//  Sakura Petal Generator
 function createSakura() {
   const container = document.querySelector(".sakura-container");
   if (!container) return;
@@ -308,20 +307,50 @@ function createSakura() {
   const petal = document.createElement("div");
   petal.classList.add("sakura");
 
-  // Start near the top-right, randomize a bit horizontally
-  petal.style.right = `${Math.random() * 50}px`; // 0–50px from right
-  petal.style.top = `-${Math.random() * 20 + 20}px`; // above view
-  petal.style.animationDuration = `${6 + Math.random() * 4}s`;
+  // Randomize size for pixel effect
+  const size = 4 + Math.random() * 6; // 4px–10px
+  petal.style.width = `${size}px`;
+  petal.style.height = `${size}px`;
+
+  // Start at top-right
+  petal.style.right = `${Math.random() * 50}px`;
+  petal.style.top = `-${Math.random() * 20 + 10}px`;
+
+  // Randomize rotation start
+  const rotateStart = Math.random() * 360;
+  petal.style.transform = `rotate(${rotateStart}deg)`;
+
+  // Animation duration and delay
+  const duration = 6 + Math.random() * 5; // 6–11s
+  petal.style.animationDuration = `${duration}s`;
   petal.style.animationDelay = `${Math.random() * 2}s`;
-  petal.style.transform = `rotate(${Math.random() * 360}deg)`;
-  petal.style.opacity = 0.6 + Math.random() * 0.4;
+
+  // Drift speed multiplier (leftward)
+  petal.dataset.drift = 50 + Math.random() * 100; // px drift left
 
   container.appendChild(petal);
 
-  // Remove after animation ends
-  setTimeout(() => petal.remove(), 12000);
+  // Animate with physics
+  let start = null;
+  function animate(time) {
+    if (!start) start = time;
+    const progress = (time - start) / (duration * 1000);
+    if (progress >= 1) {
+      petal.remove();
+      return;
+    }
+    const y = progress * window.innerHeight;
+    const x = -progress * parseFloat(petal.dataset.drift); // drift left
+    const rotation = rotateStart + progress * 360;
+    petal.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
+    petal.style.opacity = 1 - progress; // fade out
+    requestAnimationFrame(animate);
+  }
+
+  requestAnimationFrame(animate);
 }
 
-// spawn petals every 400ms for smoother effect
-setInterval(createSakura, 400);
+// spawn petals faster for denser effect
+setInterval(createSakura, 300);
+
 
