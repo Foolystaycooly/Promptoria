@@ -9,13 +9,19 @@
 <body>
 
   <!-- Radio -->
-  <div class="sidebar-radio">
-  <h3>🎶 Radio</h3>
-  <audio id="radioPlayer" controls>
-    <source src="https://stream-ssl.radionomy.com/DeepHouseLounge" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
+ <div class="sidebar-radio">
+  <h3>🎶 J-Pop Radio</h3>
+  <div class="radio-controls">
+    <button id="prevStation" class="radio-btn">⏮</button>
+    <button id="playPause" class="radio-btn">▶️</button>
+    <button id="nextStation" class="radio-btn">⏭</button>
+  </div>
+  <p id="nowPlaying" style="font-size:0.85rem;opacity:.8;margin-top:6px;">
+    Loading station...
+  </p>
+  <audio id="radioPlayer"></audio>
 </div>
+
 
   <!-- Sidebar -->
   <aside class="sidebar-overlay" id="sidebar">
