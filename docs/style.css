@@ -228,12 +228,13 @@ button#generate:hover {
 
 .sakura {
   position: absolute;
-  width: 16px;
+  width: 14px;
   height: 14px;
   background: radial-gradient(circle at 40% 40%, #ffc0cb 40%, #ffb6c1 100%);
   border-radius: 50% 60% 40% 60%;
   opacity: 0.9;
-  top: -20px;
+  pointer-events: none;
+  z-index: 9999; /* always on top */
   animation: fall linear forwards;
 }
 
@@ -243,7 +244,7 @@ button#generate:hover {
     opacity: 1;
   }
   100% {
-    transform: translateY(110vh) translateX(-150px) rotate(360deg);
+    transform: translateY(110vh) translateX(-100px) rotate(360deg);
     opacity: 0;
   }
 }
