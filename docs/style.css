@@ -214,36 +214,36 @@ button#generate:hover {
 }
 
 
-/* Sakura Petals Animation */
+/*  Sakura Petals Animation */
 .sakura-container {
   position: fixed;
-  pointer-events: none; /* never blocks clicks or interactions */
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   overflow: visible;
-  z-index: 9999; /* stays above background, below modals */
+  pointer-events: none; /* won't block clicks */
+  z-index: 5000; /* ensure above content */
 }
 
 .sakura {
   position: absolute;
-  top: -10px;
-  width: 14px;
+  width: 16px;
   height: 14px;
-  background: radial-gradient(circle at 40% 40%, pink 40%, #ffb6c1 100%);
+  background: radial-gradient(circle at 40% 40%, #ffc0cb 40%, #ffb6c1 100%);
   border-radius: 50% 60% 40% 60%;
-  opacity: 0.85;
+  opacity: 0.9;
+  top: -20px;
   animation: fall linear forwards;
 }
 
 @keyframes fall {
   0% {
-    transform: translateX(0) rotate(0deg);
+    transform: translateY(0) translateX(0) rotate(0deg);
     opacity: 1;
   }
   100% {
-    transform: translateX(-150px) translateY(110vh) rotate(360deg);
+    transform: translateY(110vh) translateX(-150px) rotate(360deg);
     opacity: 0;
   }
 }
