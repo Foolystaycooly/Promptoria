@@ -20,7 +20,7 @@ Try the frontend UI here: [https://foolystaycooly.github.io/Promptoria/]
 
 ## 🧠 Tech Stack
 **Frontend:** HTML, CSS (Tailwind-like styling), JavaScript  
-**Backend:** Node.js (Express), OpenAI API  
+**Backend:** Node.js (Express), OpenAI API, Render Hosting
 **Database:** LocalStorage (for now)  
 **Design:** Magical dark + soft pink theme
 
