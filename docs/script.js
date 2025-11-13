@@ -182,6 +182,51 @@ if (searchBox && promptList) {
   });
 }
 
+// --- Mobile swipe / overlay ---
+let startX = 0;
+let isDragging = false;
+
+// Create backdrop
+let backdrop = document.createElement("div");
+backdrop.className = "sidebar-backdrop";
+document.body.appendChild(backdrop);
+
+// Swipe gestures for mobile
+document.addEventListener("touchstart", e => {
+  if (window.innerWidth >= 900) return; // only mobile
+  startX = e.touches[0].clientX;
+  isDragging = startX < 30; // start drag from very left edge
+});
+
+document.addEventListener("touchmove", e => {
+  if (!isDragging) return;
+  const touchX = e.touches[0].clientX;
+  const delta = touchX - startX;
+
+  if (delta > 50) { // swipe right to open
+    sidebar.classList.add("active");
+    backdrop.classList.add("active");
+    toggleBtn.style.left = "calc(200px + 20px)";
+  }
+  if (delta < -50) { // swipe left to close
+    sidebar.classList.remove("active");
+    backdrop.classList.remove("active");
+    toggleBtn.style.left = "20px";
+  }
+});
+
+document.addEventListener("touchend", () => {
+  isDragging = false;
+});
+
+// Backdrop click closes sidebar
+backdrop.addEventListener("click", () => {
+  sidebar.classList.remove("active");
+  backdrop.classList.remove("active");
+  toggleBtn.style.left = "20px";
+});
+
+
 // --- Utilities ---
 function escapeHtml(str) {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
