@@ -240,3 +240,63 @@ function escapeHtml(unsafe) {
 
 // Initialize library on load
 window.addEventListener("load", renderLibrary);
+
+
+// =======================
+// J-Pop Radio Player
+// =======================
+const radioPlayer = document.getElementById("radioPlayer");
+const playPause = document.getElementById("playPause");
+const nextStation = document.getElementById("nextStation");
+const prevStation = document.getElementById("prevStation");
+const nowPlaying = document.getElementById("nowPlaying");
+
+// Curated J-Pop stations (free streams)
+const jpopStations = [
+  { name: "Japan-A-Radio", url: "https://streamingv2.shoutcast.com/japanaradio" },
+  { name: "J-Pop Powerplay", url: "https://ais-edge04-live365-dal02.cdnstream.com/a18846" },
+  { name: "J-Pop Sakura", url: "https://listen.moe/stream" },
+  { name: "Radio Anime Nexus", url: "https://radioanimenexus.radioca.st/stream" }
+];
+
+let currentStation = parseInt(localStorage.getItem("jpopStationIndex")) || 0;
+let isPlaying = false;
+
+function loadStation(index) {
+  const station = jpopStations[index];
+  if (!station) return;
+  radioPlayer.src = station.url;
+  nowPlaying.textContent = `🎧 Now Playing: ${station.name}`;
+  localStorage.setItem("jpopStationIndex", index);
+  if (isPlaying) radioPlayer.play().catch(() => {});
+}
+
+// --- Play / Pause ---
+if (playPause) {
+  playPause.addEventListener("click", () => {
+    if (!radioPlayer.src) loadStation(currentStation);
+    if (radioPlayer.paused) {
+      radioPlayer.play().catch(() => {});
+      isPlaying = true;
+      playPause.textContent = "⏸️";
+    } else {
+      radioPlayer.pause();
+      isPlaying = false;
+      playPause.textContent = "▶️";
+    }
+  });
+}
+
+// --- Next / Previous ---
+function changeStation(step) {
+  currentStation = (currentStation + step + jpopStations.length) % jpopStations.length;
+  loadStation(currentStation);
+  if (isPlaying) radioPlayer.play().catch(() => {});
+}
+
+if (nextStation) nextStation.addEventListener("click", () => changeStation(1));
+if (prevStation) prevStation.addEventListener("click", () => changeStation(-1));
+
+// --- Initialize ---
+loadStation(currentStation);
+
