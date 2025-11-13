@@ -75,7 +75,7 @@ Mobile app and Chrome extension.
 
 ⚠️ Do not copy or use this code for commercial purposes without permission.
 
-MIT License (personal portfolio use allowed).
+MIT License 
 
 
 Contact / Feedback
