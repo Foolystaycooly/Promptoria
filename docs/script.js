@@ -155,11 +155,12 @@ if (button) {
     if (output) output.textContent = "✨ Optimizing your prompt...";
 
     try {
-      const res = await fetch("https://promptoria-ly2b.onrender.com", {
+      const BACKEND_URL = "https://promptoria-ly2b.onrender.com"; // your Render URL
+      const res = await fetch(`${BACKEND_URL}/api/optimize`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
-      });
+     });
       const data = await res.json();
       if (output) output.textContent = data.optimizedPrompt || "⚠️ Error optimizing prompt.";
       if (saveBtn) saveBtn.style.display = "inline-block";
