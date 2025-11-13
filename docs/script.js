@@ -33,28 +33,60 @@ navButtons.forEach(btn => {
 // --- Backend URL ---
 const BACKEND_URL = "https://promptoria-ly2b.onrender.com";
 
-// --- Sidebar toggle ---
-if (toggleBtn && sidebar) {
-  toggleBtn.addEventListener("click", () => {
-    sidebar.classList.toggle("active");
+// ----------------------------
+// Sidebar toggle & mobile support
+// ----------------------------
+if (sidebar && toggleBtn) {
+  const BACKDROP_ZINDEX = 999;
 
-    // move toggle button
-    const width = sidebar.getBoundingClientRect().width || 240;
-    toggleBtn.style.left = sidebar.classList.contains("active") ? `${width + 20}px` : "20px";
-    toggleBtn.setAttribute("aria-expanded", sidebar.classList.contains("active"));
+  // Create backdrop for mobile
+  let backdrop = document.createElement("div");
+  backdrop.className = "sidebar-backdrop";
+  document.body.appendChild(backdrop);
 
-    // For mobile, do not push main content
-    if (window.innerWidth < 900) return;
-  });
-
-  // close sidebar on outside click
-  document.addEventListener("click", e => {
-    if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target) && sidebar.classList.contains("active")) {
-      sidebar.classList.remove("active");
-      toggleBtn.style.left = "20px";
+  const setSidebarPosition = (active) => {
+    if (window.innerWidth < 900) {
+      // Mobile overlay mode
+      sidebar.classList.toggle("active", active);
+      backdrop.classList.toggle("active", active);
+      toggleBtn.style.left = active ? (sidebar.getBoundingClientRect().width + 20) + "px" : "20px";
+    } else {
+      // Desktop: shift main content
+      sidebar.classList.toggle("active", active);
+      document.querySelector(".main-content").style.marginLeft = active ? "240px" : "0";
+      toggleBtn.style.left = active ? "260px" : "20px";
     }
+  };
+
+  // Toggle button click
+  toggleBtn.addEventListener("click", () => {
+    const active = !sidebar.classList.contains("active");
+    setSidebarPosition(active);
   });
+
+  // Close sidebar by clicking backdrop (mobile only)
+  backdrop.addEventListener("click", () => setSidebarPosition(false));
+
+  // Optional: swipe gestures (mobile only)
+  let startX = 0;
+  let isDragging = false;
+
+  document.addEventListener("touchstart", e => {
+    if (window.innerWidth >= 900) return;
+    startX = e.touches[0].clientX;
+    isDragging = startX < 30; // start from left edge
+  });
+
+  document.addEventListener("touchmove", e => {
+    if (!isDragging) return;
+    const delta = e.touches[0].clientX - startX;
+    if (delta > 50) setSidebarPosition(true);
+    if (delta < -50) setSidebarPosition(false);
+  });
+
+  document.addEventListener("touchend", () => { isDragging = false; });
 }
+
 
 // --- Navigation ---
 const setActiveSection = (id) => {
