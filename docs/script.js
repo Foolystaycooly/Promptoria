@@ -155,7 +155,7 @@ if (button) {
     if (output) output.textContent = "✨ Optimizing your prompt...";
 
     try {
-      const res = await fetch("http://localhost:3000/api/optimize", {
+      const res = await fetch("https://promptoria-ly2b.onrender.com", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
