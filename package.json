@@ -1,0 +1,35 @@
+{
+  "name": "promptoria",
+  "version": "1.0.0",
+  "description": "**Promptoria** helps you craft optimized prompts for ChatGPT, Claude, Gemini, Midjourney, and more.  \r It’s built to make prompt creation intuitive, fun, and *magically productive*.",
+  "main": "server.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "openai": "^6.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/foolystaycooly/promptoria.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/foolystaycooly/promptoria/issues"
+  },
+  "homepage": "https://github.com/foolystaycooly/promptoria#readme"
+}
+
+
