@@ -300,3 +300,27 @@ if (prevStation) prevStation.addEventListener("click", () => changeStation(-1));
 // --- Initialize ---
 loadStation(currentStation);
 
+//  Sakura Petal Generator
+function createSakura() {
+  const container = document.querySelector(".sakura-container");
+  if (!container) return;
+
+  const petal = document.createElement("div");
+  petal.classList.add("sakura");
+
+  // random start position (mainly from the right)
+  petal.style.right = `${Math.random() * 20}px`;
+  petal.style.animationDuration = `${8 + Math.random() * 5}s`;
+  petal.style.opacity = Math.random() * 0.8 + 0.2;
+  petal.style.transform = `rotate(${Math.random() * 360}deg)`;
+
+  container.appendChild(petal);
+
+  // remove petal after it falls
+  setTimeout(() => petal.remove(), 14000);
+}
+
+// spawn petals every 400ms
+setInterval(createSakura, 400);
+
+
