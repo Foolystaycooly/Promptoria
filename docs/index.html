@@ -1,25 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Promptoria — AI Prompt Builder</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Promptoria</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
   <!-- Sidebar -->
   <aside class="sidebar-overlay" id="sidebar">
     <div id="sidebarLogo"></div>
-    <nav>
-      <button class="sidebar-btn active" data-section="generator">⚡ Generator</button>
-      <button class="sidebar-btn" data-section="library">📚 Library</button>
-      <button class="sidebar-btn" data-section="search">🔍 Search</button>
-    </nav>
-    <p class="sidebar-footer">© 2025 Promptoria</p>
+    <div class="sidebar-nav">
+      <button class="sidebar-btn" data-section="generator">Generator</button>
+      <button class="sidebar-btn" data-section="library">Library</button>
+      <button class="sidebar-btn" data-section="search">Search</button>
+    </div>
+    <div class="sidebar-footer">© 2025 Promptoria</div>
   </aside>
 
-  <!-- Toggle Button -->
-  <button id="sidebarToggle" class="sidebar-toggle">☰</button>
+  <!-- Sidebar Toggle -->
+  <button class="sidebar-toggle" id="sidebarToggle">☰</button>
 
   <!-- Main Content -->
   <main class="main-content">
@@ -49,9 +50,16 @@
           <option>Creative</option>
           <option>Analytical</option>
         </select>
+        <select id="context">
+          <option>General</option>
+          <option>Storytelling</option>
+          <option>Technical</option>
+          <option>Marketing</option>
+        </select>
       </div>
 
       <button id="generate">✨ Generate Prompt</button>
+      <button id="savePromptBtn" style="display:none;">💾 Save Prompt</button>
       <div id="output" class="output-box">Your prompt will appear here...</div>
     </section>
 
