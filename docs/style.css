@@ -74,6 +74,16 @@ h1, h2, h3, p {
   background: rgba(255, 105, 180, 0.2);
 }
 
+/* Mobile adjustments */
+@media (max-width: 900px) {
+  .sidebar-overlay {
+    width: 70%;  /* narrower on mobile */
+  }
+  #sidebarToggle {
+    left: 10px;  /* small padding */
+  }
+}
+
 /* Footer */
 .sidebar-footer {
   bottom: 10px; 
@@ -175,3 +185,5 @@ button#generate:hover {
   0% { opacity: 0.3; }
   100% { opacity: 0.8; }
 }
+
+
