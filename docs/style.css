@@ -11,8 +11,6 @@ h1, h2, h3, p {
   margin: 0 0 10px 0;
 }
 
-
-
 /* --- Sidebar --- */
 .sidebar-overlay {
   position: fixed;
@@ -74,8 +72,7 @@ h1, h2, h3, p {
   background: rgba(255, 105, 180, 0.2);
 }
 
-
-/* Footer */
+/* Sidebar Footer */
 .sidebar-footer {
   bottom: 10px; 
   font-size: 0.8rem;
@@ -107,6 +104,7 @@ h1, h2, h3, p {
   background: #ff85c1;
 }
 
+/* Toggle button shift when sidebar open */
 .sidebar-overlay.active ~ .sidebar-toggle {
   left: 260px;
 }
@@ -122,6 +120,7 @@ h1, h2, h3, p {
   margin-left: 240px;
 }
 
+/* Sections */
 .section {
   display: none;
 }
@@ -162,7 +161,7 @@ button#generate:hover {
   box-shadow: inset 0 0 20px rgba(255, 105, 180, 0.2);
 }
 
-/* Magical glow background */
+/* --- Magical glow background --- */
 .sidebar-overlay::before {
   content: "";
   position: absolute;
@@ -177,3 +176,63 @@ button#generate:hover {
   100% { opacity: 0.8; }
 }
 
+/* --- Responsive / Mobile Improvements --- */
+@media (max-width: 900px) {
+  .sidebar-overlay {
+    width: 200px;
+    left: -200px;
+    padding: 15px 8px;
+  }
+  
+  .sidebar-overlay.active ~ .main-content {
+    margin-left: 0; /* Main content stays full width on mobile */
+  }
+
+  .sidebar-toggle {
+    top: 15px;
+    left: 15px;
+    padding: 8px 12px;
+    font-size: 1.1rem;
+  }
+
+  #sidebarLogo {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+
+  .sidebar-btn {
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+
+  .main-content {
+    padding: 60px 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .sidebar-overlay {
+    width: 180px;
+    left: -180px;
+  }
+
+  .sidebar-toggle {
+    top: 10px;
+    left: 10px;
+    font-size: 1rem;
+    padding: 6px 10px;
+  }
+
+  #sidebarLogo {
+    font-size: 1.3rem;
+  }
+
+  .sidebar-btn {
+    font-size: 0.85rem;
+    padding: 8px;
+  }
+
+  .main-content {
+    padding: 50px 15px;
+  }
+}
